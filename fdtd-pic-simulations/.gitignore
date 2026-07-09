@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.env
+.tidy3d_cache/
+.ipynb_checkpoints/
+.DS_Store
+*.gds

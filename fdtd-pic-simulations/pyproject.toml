@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fdtd-pic-simulations"
+version = "0.1.0"
+description = "Modular Tidy3D FDTD simulations for silicon photonics (Project 2)."
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = { text = "MIT" }
+dependencies = [
+    "tidy3d>=2.7",
+    "numpy>=1.26",
+    "matplotlib>=3.8",
+    "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "jupyter>=1",
+    "nbconvert>=7",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["fdtd_pic*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
