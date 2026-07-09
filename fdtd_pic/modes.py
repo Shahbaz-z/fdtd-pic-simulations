@@ -35,9 +35,16 @@ class ModeSolveResult:
 def _mode_simulation_box(width: float) -> tuple[tuple[float, float, float], list[td.Structure]]:
     """Simulation domain sized for a given strip width."""
     plane_x, plane_y = MODE_PLANE_SIZE
-    sim_x = max(plane_x + 2 * PML_SPACING, 4.0)
-    sim_y = max(plane_y + 2 * PML_SPACING, width + 2 * PML_SPACING + 1.0)
-    sim_z = HEIGHT + 2 * PML_SPACING #pml perfect mactching layer
+    margin_y = 4.0
+    margin_z = 4.0
+    plane_y = max(6.0, width + margin_y)
+    plane_z = HEIGHT + margin_z
+
+    sim_x = 4.0   # short in x is fine for mode solver
+    sim_y = plane_y + 2 * PML_SPACING
+    sim_z = plane_z + 2 * PML_SPACING
+
+
     structures = make_strip_waveguide(width=width, length=sim_x * 0.5)
     return (sim_x, sim_y, sim_z), structures
 
@@ -62,9 +69,13 @@ def build_mode_solver(width: float) -> ModeSolver:
         medium=sio2_medium()
     )
 
-    plane_y = max(MODE_PLANE_SIZE[0], width + 2 * PML_SPACING + 1.0)
-    plane_z = HEIGHT + 2 * PML_SPACING
-    plane = td.Box(center=(0, 0, 0), size=(0, plane_y, plane_z)) # needed to fix to y-z plane as we have x propagation
+    margin_y = 4.0   # µm extra cladding in y
+    margin_z = 4.0   # µm extra cladding in z
+
+    plane_y = max(6.0, width + margin_y)
+    plane_z = HEIGHT + margin_z
+    plane = td.Box(center=(0, 0, 0), size=(0, plane_y, plane_z)) #adding clading to the mode solver box
+
 
     return ModeSolver(
         simulation=simulation,
