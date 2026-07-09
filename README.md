@@ -21,7 +21,6 @@ Coupler and ring plots are produced after running notebooks 02–03 on the Tidy3
 Requires **Python 3.11** (3.14 is not yet supported by this package pin) and a free [Tidy3D](https://tidy3d.ai) account for FDTD modules.
 
 ```bash
-cd fdtd-pic-simulations
 py -3.11 -m venv .venv
 .venv\Scripts\activate          # Windows
 pip install -e ".[dev]"
