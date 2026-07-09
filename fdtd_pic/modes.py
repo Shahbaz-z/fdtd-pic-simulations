@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from turtle import width
 
 import numpy as np
 import tidy3d as td
 from tidy3d.plugins.mode import ModeSolver
+from fdtd_pic.materials import sio2_medium
 
 from fdtd_pic.config import (
     FREQ0,
@@ -35,7 +37,7 @@ def _mode_simulation_box(width: float) -> tuple[tuple[float, float, float], list
     plane_x, plane_y = MODE_PLANE_SIZE
     sim_x = max(plane_x + 2 * PML_SPACING, 4.0)
     sim_y = max(plane_y + 2 * PML_SPACING, width + 2 * PML_SPACING + 1.0)
-    sim_z = HEIGHT + 2 * PML_SPACING
+    sim_z = HEIGHT + 2 * PML_SPACING #pml perfect mactching layer
     structures = make_strip_waveguide(width=width, length=sim_x * 0.5)
     return (sim_x, sim_y, sim_z), structures
 
@@ -57,9 +59,12 @@ def build_mode_solver(width: float) -> ModeSolver:
         monitors=[],
         run_time=1e-12,
         boundary_spec=td.BoundarySpec.all_sides(boundary=td.PML()),
+        medium=sio2_medium()
     )
 
-    plane = td.Box(center=(0, 0, 0), size=(sim_x - 2 * PML_SPACING, sim_y - 2 * PML_SPACING, 0))
+    plane_y = max(MODE_PLANE_SIZE[0], width + 2 * PML_SPACING + 1.0)
+    plane_z = HEIGHT + 2 * PML_SPACING
+    plane = td.Box(center=(0, 0, 0), size=(0, plane_y, plane_z)) # needed to fix to y-z plane as we have x propagation
 
     return ModeSolver(
         simulation=simulation,
@@ -91,10 +96,11 @@ def sweep_widths(widths: tuple[float, ...] | list[float]) -> tuple[np.ndarray, n
     n_effs = []
     for w in widths_arr:
         result = solve_modes(float(w))
-        n_effs.append(result.n_eff[0])
+        n_effs.append(float(np.max(result.n_eff)))
     return widths_arr, np.asarray(n_effs)
 
 
 def te00_mode_index(mode_data: object) -> int:
     """Return mode index of fundamental TE mode (lowest n_eff TE)."""
     return 0
+
