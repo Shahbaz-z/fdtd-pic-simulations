@@ -1,4 +1,4 @@
-# FDTD PIC Simulations
+py# FDTD PIC Simulations
 
 Modular **Tidy3D** electromagnetic simulations for silicon photonics (Project 2). Companion to the layout-only [PIC-component-Library](https://github.com/Shahbaz-z/PIC-component-Library) — same SOI defaults, but here Maxwell’s equations validate the physics.
 
