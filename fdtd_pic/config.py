@@ -13,6 +13,11 @@ WAVELENGTH = 1.55
 HEIGHT = 0.22
 DEFAULT_WIDTH = 0.5
 COUPLING_LENGTH = 10.0
+
+COUPLER_LEAD_LENGTH = 3.0
+COUPLER_L_EFF = COUPLING_LENGTH + 2 * COUPLER_LEAD_LENGTH  # 16 µm FDTD overlap
+COUPLER_SWEEP_PREFIX = "coupler_v3"
+
 RING_RADIUS = 10.0
 RING_GAP = 0.2
 
@@ -26,7 +31,7 @@ MODE_SOLVER_NUM_MODES = 4
 
 # --- FDTD grid / runtime ---
 MIN_STEPS_PER_WVL = 15
-RUN_TIME_FACTOR = 10  # run_time = RUN_TIME_FACTOR / fwidth
+RUN_TIME_FACTOR = 50  # run_time = RUN_TIME_FACTOR / fwidth #5x run time to let fields settle
 PML_SPACING = 2.0 * WAVELENGTH
 
 # --- Sweeps ---

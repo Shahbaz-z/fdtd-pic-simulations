@@ -97,7 +97,7 @@ def build_coupler_simulation(
 
     source = td.ModeSource(
         center=(x_in, y_lower, 0.0),
-        size=(0, width + 2 * PML_SPACING, sim_z),
+        size=(0, width, sim_z),
         source_time=source_time,
         direction="+",
         mode_spec=mode_spec,
@@ -106,14 +106,14 @@ def build_coupler_simulation(
 
     monitor_bar_out = td.ModeMonitor(
         center=(x_out, y_lower, 0.0),
-        size=(0, width + 2 * PML_SPACING, sim_z),
+        size=(0, width, sim_z),
         freqs=[FREQ0],
         mode_spec=mode_spec,
         name="bar_out",
     )
     monitor_cross_out = td.ModeMonitor(
         center=(x_out, y_upper, 0.0),
-        size=(0, width + 2 * PML_SPACING, sim_z),
+        size=(0, width, sim_z),
         freqs=[FREQ0],
         mode_spec=mode_spec,
         name="cross_out",
