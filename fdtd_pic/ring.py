@@ -1,5 +1,8 @@
 """Ring resonator FDTD simulation assembly."""
 
+# problem at 3 oclock, fixing defection.
+
+
 from __future__ import annotations
 
 import numpy as np
@@ -44,7 +47,7 @@ def make_ring_structures(
     bus_length: float = 30.0,
 ) -> list[td.Structure]:
     """Bus waveguide + ring cavity."""
-    ring_center_y = radius + gap + width / 2
+    ring_center_y = radius + gap + width
 
     bus = td.Structure(
         geometry=td.Box(
@@ -53,14 +56,27 @@ def make_ring_structures(
         ),
         medium=si_medium(),
     )
+    ring_center = (0.0, ring_center_y, 0.0)
+    r_outer = radius + width / 2
+    r_inner = max(radius - width / 2, width * 0.25)
+
+    outer = td.Cylinder(
+        center=ring_center,
+        axis=2,
+        radius=r_outer,
+        length=HEIGHT,
+    )
+    inner = td.Cylinder(
+        center=ring_center,
+        axis=2,
+        radius=r_inner,
+        length=HEIGHT,
+    )
     ring = td.Structure(
-        geometry=td.PolySlab(
-            vertices=_ring_vertices(radius, width, center=(0.0, ring_center_y)),
-            slab_bounds=(-HEIGHT / 2, HEIGHT / 2),
-            axis=2,
-        ),
+        geometry=outer - inner,
         medium=si_medium(),
     )
+
     return [make_substrate(), bus, ring]
 
 
@@ -73,7 +89,7 @@ def build_ring_simulation(
 ) -> td.Simulation:
     """Broadband FDTD simulation of a single-bus ring resonator."""
     structures = make_ring_structures(radius, gap, width, bus_length)
-    ring_center_y = radius + gap + width / 2
+    ring_center_y = radius + gap + width
 
     sim_x = bus_length + 2 * PML_SPACING + WAVELENGTH
     sim_y = ring_center_y + radius + width + 2 * PML_SPACING + WAVELENGTH
