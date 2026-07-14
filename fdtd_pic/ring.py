@@ -24,6 +24,8 @@ from fdtd_pic.materials import si_medium, sio2_medium
 from fdtd_pic.waveguide import make_substrate
 
 
+Ring_run_time_factor = RUN_TIME_FACTOR * 2.0  # ring resonators take longer to converge
+
 def _ring_vertices(
     radius: float,
     width: float,
@@ -91,9 +93,24 @@ def build_ring_simulation(
     structures = make_ring_structures(radius, gap, width, bus_length)
     ring_center_y = radius + gap + width
 
-    sim_x = bus_length + 2 * PML_SPACING + WAVELENGTH
-    sim_y = ring_center_y + radius + width + 2 * PML_SPACING + WAVELENGTH
+    r_outer = radius + width / 2
+
+    # Extents of bus + ring
+    y_min = min(-width / 2, ring_center_y - r_outer)
+    y_max = max(width / 2, ring_center_y + r_outer)
+    x_min = min(-bus_length / 2, -r_outer)
+    x_max = max(bus_length / 2, r_outer)
+
+    buffer = WAVELENGTH
+    sim_x = (x_max - x_min) + 2 * PML_SPACING + buffer
+    sim_y = (y_max - y_min) + 2 * PML_SPACING + buffer
     sim_z = HEIGHT + 2 * PML_SPACING
+
+    sim_center = (
+        (x_max + x_min) / 2,
+        (y_max + y_min) / 2,
+        0.0,
+    )
 
     x_src = -bus_length / 2 + PML_SPACING + 0.5
     x_mon = bus_length / 2 - PML_SPACING - 0.5
@@ -130,7 +147,7 @@ def build_ring_simulation(
 
     return td.Simulation(
         size=(sim_x, sim_y, sim_z),
-        center=(0, ring_center_y / 2, 0),
+        center=sim_center,
         grid_spec=td.GridSpec.auto(
             min_steps_per_wvl=MIN_STEPS_PER_WVL,
             wavelength=WAVELENGTH,
@@ -138,7 +155,7 @@ def build_ring_simulation(
         structures=structures,
         sources=[source],
         monitors=[flux_in, flux_out, field_monitor],
-        run_time=RUN_TIME_FACTOR / FWIDTH,
+        run_time=5e-10, # need ns runtime for ring energy to decay...
         boundary_spec=td.BoundarySpec.all_sides(boundary=td.PML()),
         medium=sio2_medium(),
     )

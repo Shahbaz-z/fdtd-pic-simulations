@@ -30,7 +30,7 @@ MODE_PLANE_SIZE = (8.0, 8.0)
 MODE_SOLVER_NUM_MODES = 4
 
 # --- FDTD grid / runtime ---
-MIN_STEPS_PER_WVL = 15
+MIN_STEPS_PER_WVL = 10 # made it coarser to help with tidy3d limits
 RUN_TIME_FACTOR = 50  # run_time = RUN_TIME_FACTOR / fwidth #5x run time to let fields settle
 PML_SPACING = 2.0 * WAVELENGTH
 
