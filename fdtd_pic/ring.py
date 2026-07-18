@@ -152,10 +152,10 @@ def build_ring_simulation(
             min_steps_per_wvl=MIN_STEPS_PER_WVL,
             wavelength=WAVELENGTH,
         ),
-        structures=structures,
+        structures=structures,  
         sources=[source],
         monitors=[flux_in, flux_out, field_monitor],
-        run_time=5e-10, # need ns runtime for ring energy to decay...
+        run_time=(2.4 * Ring_run_time_factor) / FWIDTH,  # from an exponential fit after receiving field decay warning message that i chose 2.5 multiplier of run time.
         boundary_spec=td.BoundarySpec.all_sides(boundary=td.PML()),
         medium=sio2_medium(),
     )
