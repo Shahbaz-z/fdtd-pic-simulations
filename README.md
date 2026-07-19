@@ -52,20 +52,17 @@ Exponential fit to FDTD data: **κ₀ = 0.195**, **decay = 0.124 µm**. Project 
 
 ![κ vs gap](assets/coupler_kappa_vs_gap.png)
 
-<details>
-<summary>Coupler field animations (100 nm and 400 nm gap)</summary>
+**Field animations (extreme gaps).** At 100 nm gap, power couples strongly to the cross port; at 400 nm gap, most power remains in the bar port.
 
 | 100 nm gap | 400 nm gap |
 |------------|------------|
 | ![Coupler field at 100 nm gap](assets/gif_100micron.gif) | ![Coupler field at 400 nm gap](assets/gif_400micron.gif) |
 
-</details>
-
 ### Module 3 — Ring resonator Q-factor and FSR
 
 Single-bus ring: R = 10 µm, gap = 0.2 µm, 220 nm SOI. A broadband Gaussian pulse records bus transmission vs frequency; Lorentzian fitting extracts Q and FSR.
 
-![Ring geometry](assets/ring_geometry_fixed.png)
+![Ring geometry](assets/ring_geometrytouse.png)
 
 **Pass 1 — broadband scan (convergence lesson).** The wide-band run shows periodic notches with FSR ~1.16 THz, consistent with the analytical estimate ~1.14 THz (n_g ≈ 4.2). However, transmission exceeds 1 and the Lorentzian fit gives Q ≈ 9 — a sign the simulation had not fully converged (incomplete field decay for this high-Q cavity).
 
