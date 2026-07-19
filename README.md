@@ -16,7 +16,7 @@ Modular **Tidy3D** electromagnetic simulations for silicon photonics (Project 2)
 | 0 — Setup | Cloud FDTD | Pipeline verified; straight waveguide field looks correct |
 | 1 — Modes | ModeSolver (local) | \(n_\mathrm{eff}\): ~1.8 @ 300 nm → ~2.7 @ 800 nm; single-mode window **400–500 nm** |
 | 2 — Coupler | 3D FDTD | Fitted κ₀ = **0.195**, decay = **0.124 µm**; Project 1 toy κ₀ = 3 does not match this cell |
-| 3 — Ring | Broadband + fine FDTD | **Q ≈ 10,684** @ **194.88 THz**; FSR ~**1.14–1.16 THz** (analytical vs simulation) |
+| 3 — Ring | Broadband + fine FDTD | **Q ≈ 25,600** (multi-Lorentzian fit); FSR ~**1.14–1.16 THz** (analytical vs simulation) |
 
 ---
 
@@ -73,20 +73,18 @@ Single-bus ring: R = 10 µm, gap = 0.2 µm, 220 nm SOI. A broadband Gaussian pul
 
 ![Broadband Lorentzian fit (unreliable Q)](assets/ring_lorentzian_fit.png)
 
-**Pass 2 — fine band (authoritative).** A narrow-band re-run (±1 THz around ~194 THz, 0.01 THz step) resolves the deepest resonance cleanly:
+**Pass 2 — fine band (authoritative).** A narrow-band re-run (±1 THz around ~194 THz, 0.01 THz step) with a **multi-Lorentzian fit** resolves both resonances cleanly:
 
-| Quantity | Value |
-|----------|-------|
-| Resonance f₀ | **194.88 THz** (λ ≈ 1.54 µm) |
-| Q-factor | **10,684** |
-| Extinction | ≈ **5.1 dB** (T_min = 0.34, T_max = 1.08) |
-| FSR (broadband pass) | ~1.16 THz sim vs ~1.14 THz analytical |
+| Dip | Frequency | Q-factor |
+|-----|-----------|----------|
+| Dip 1 (deeper) | **194.87 THz** | **25,575** |
+| Dip 2 | **193.75 THz** | **25,821** |
 
-![Fine-band transmission and Lorentzian fit](assets/ring_fine_transmission.png)
+FSR from the broadband pass: ~1.16 THz sim vs ~1.14 THz analytical (n_g ≈ 4.2).
 
-![On- vs off-resonance field magnitude](assets/ring_field_on_off_res.png)
+![Fine-band transmission and multi-Lorentzian fit](assets/ring_fine_transmission.png)
 
-A secondary dip near **193.72 THz** is under-resolved at this frequency step; field snapshots at both frequencies show stronger ring excitation at 194.88 THz (deeper transmission notch) and weaker excitation at 193.72 THz.
+Field snapshots at both fitted resonances show stronger ring excitation at 194.88 THz (deeper transmission notch) and weaker excitation at 193.72 THz.
 
 | 193.72 THz | 194.88 THz |
 |------------|------------|
@@ -108,7 +106,7 @@ The apparent thinning/flashing in these Ex animations is a visualization artifac
 ## Limitations and lessons learned
 
 - **Broadband ring pass:** Energy had not fully decayed before the run ended, producing T > 1 and a meaningless Q ≈ 9. High-Q rings need either much longer runtime or narrow-band targeting around a single resonance.
-- **Fine-band ring pass:** Frequency sampling must be fine enough to resolve the linewidth; the 193.72 THz secondary dip would benefit from an even smaller step.
+- **Fine-band ring pass:** A single Lorentzian fit can mis-fit when multiple resonances sit in the same window — a multi-Lorentzian fit at 0.01 THz step gave Q ≈ 25,600 for both dips.
 - **Coupler κ fit:** A single exponential κ(g) is qualitative — FDTD κ decays faster than the fit at small gaps and more slowly at large gaps.
 - **Field animations:** Ex-component GIFs can show standing-wave-like thinning that disappears in time-averaged \|E\| plots; use magnitude snapshots for physical interpretation.
 - **Geometry matters:** An early ring geometry bug (clipped/disconnected ring) was fixed in commit `105cfae` before the fine pass gave trustworthy results.
